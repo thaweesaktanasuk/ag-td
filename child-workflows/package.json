@@ -1,0 +1,26 @@
+{
+  "name": "sdk-example-child-workflows",
+  "version": "0.0.1",
+  "description": "Restack Child Workflows example",
+  "scripts": {
+    "dev": "tsx watch --include src src/services.ts",
+    "build": "tsc --build",
+    "start": "node dist/services.js",
+    "schedule-workflow": "tsx scheduleWorkflow.ts",
+    "restack-web-ui": "docker run -d --pull always --name restack -p 5233:5233 -p 6233:6233 -p 7233:7233 -p 9233:9233 ghcr.io/restackio/restack:main"
+  },
+  "dependencies": {
+    "@restackio/ai": "^0.0.109",
+    "@temporalio/workflow": "1.11.6",
+    "dotenv": "16.4.5",
+    "zod": "3.23.8",
+    "zod-to-json-schema": "3.23.3"
+  },
+  "devDependencies": {
+    "@types/node": "20.16.9",
+    "dotenv-cli": "^7.4.4",
+    "prettier": "3.3.3",
+    "tsx": "4.19.2",
+    "typescript": "5.6.3"
+  }
+}

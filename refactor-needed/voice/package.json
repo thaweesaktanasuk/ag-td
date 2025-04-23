@@ -1,0 +1,48 @@
+{
+  "name": "restack-voice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start-server": "ts-node src/server.ts",
+    "start-services": "ts-node src/services.ts",
+    "dev-server": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev-services": "ts-node-dev --respawn --transpile-only src/services.ts",
+    "build": "tsc --build",
+    "clean": "rm -rf node_modules",
+    "call": "ts-node ./callWorkflow.ts",
+    "ngrok": "ngrok http 4000"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@deepgram/sdk": "3.6.0",
+    "@restackio/ai": "0.0.105",
+    "@temporalio/workflow": "1.11.6",
+    "cors": "2.8.5",
+    "dotenv": "16.4.5",
+    "express": "4.21.0",
+    "openai": "4.59.0",
+    "ts-node": "10.9.2",
+    "twilio": "5.3.0",
+    "typescript": "5.6.2",
+    "uuid": "10.0.0",
+    "ws": "8.18.0",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@types/cors": "2.8.17",
+    "@types/express": "4.17.21",
+    "@types/node": "22.5.4",
+    "@types/uuid": "10.0.0",
+    "@types/ws": "8.5.12",
+    "dotenv-cli": "7.4.4",
+    "nodemon": "3.1.4",
+    "ts-node-dev": "2.0.0",
+    "tsx": "4.19.2"
+  },
+  "optionalDependencies": {
+    "bufferutil": "4.0.8"
+  }
+}

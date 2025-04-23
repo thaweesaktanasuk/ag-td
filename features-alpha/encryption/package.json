@@ -1,0 +1,39 @@
+{
+  "name": "sdk-example-ts",
+  "version": "1.0.0",
+  "description": "Basic OpenAI example",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/services.ts",
+    "start.watch": "nodemon src/services.ts",
+    "dev": "pnpm start.watch",
+    "codec": "ts-node src/codec-server.ts",
+    "build": "tsc --build",
+    "clean": "rm -rf node_modules",
+    "schedule": "ts-node ./scheduleWorkflow.ts"
+  },
+  "nodemonConfig": {
+    "execMap": {
+      "ts": "ts-node"
+    },
+    "ext": "ts",
+    "watch": [
+      "src"
+    ]
+  },
+  "dependencies": {
+    "@restackio/ai": "^0.0.84",
+    "@temporalio/workflow": "^1.11.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "openai": "^4.71.1",
+    "yargs": "^17.7.2",
+    "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.23.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.9",
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.2"
+  }
+}

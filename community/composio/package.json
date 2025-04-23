@@ -1,0 +1,37 @@
+{
+  "name": "sdk-gemini-example-ts",
+  "version": "1.0.0",
+  "description": "Basic Gemini example",
+  "scripts": {
+    "dev": "tsx watch --include src src/services.ts",
+    "build": "tsc --build",
+    "schedule-workflow": "tsx scheduleWorkflow.ts",
+    "clean": "rm -rf node_modules",
+    "restack-engine": "docker run -d --pull always --name restack -p 5233:5233 -p 6233:6233 -p 7233:7233 -p 9233:9233 ghcr.io/restackio/restack:main"
+  },
+  "nodemonConfig": {
+    "execMap": {
+      "ts": "ts-node"
+    },
+    "ext": "ts",
+    "watch": [
+      "src"
+    ]
+  },
+  "dependencies": {
+    "@restackio/ai": "0.0.105",
+    "@temporalio/workflow": "1.11.6",
+    "composio-core": "0.2.9-10-1",
+    "dotenv": "16.4.5",
+    "install": "^0.13.0",
+    "openai": "4.73.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.16.9",
+    "dotenv-cli": "^7.4.4",
+    "nodemon": "2.0.22",
+    "ts-node": "10.9.2",
+    "tsx": "4.19.2",
+    "typescript": "5.6.3"
+  }
+}

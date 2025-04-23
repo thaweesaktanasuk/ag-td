@@ -1,0 +1,21 @@
+{
+  "name": "agent-reactflow",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build --env-mode=loose",
+    "dev": "turbo run dev --env-mode=loose",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types",
+    "start": "turbo run start --env-mode=loose"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "turbo": "^2.4.4",
+    "@restackio/ai": "^0.0.115"
+  },
+  "packageManager": "pnpm@10.6.1",
+  "engines": {
+    "node": ">=20"
+  }
+}

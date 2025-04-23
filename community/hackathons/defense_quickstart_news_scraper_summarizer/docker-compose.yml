@@ -1,0 +1,39 @@
+name: nextjs-together-llamaindex
+version: '3.8'
+networks:
+  bridge:
+    driver: bridge
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - RESTACK_ENGINE_ID=${process.env.RESTACK_ENGINE_ID}
+        - RESTACK_ENGINE_ADDRESS=${process.env.RESTACK_ENGINE_ADDRESS}
+        - RESTACK_ENGINE_API_KEY=${process.env.RESTACK_ENGINE_API_KEY}
+    ports:
+      - "3000"
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+    networks:
+      - bridge
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        - RESTACK_ENGINE_ID=${process.env.RESTACK_ENGINE_ID}
+        - RESTACK_ENGINE_ADDRESS=${process.env.RESTACK_ENGINE_ADDRESS}
+        - RESTACK_ENGINE_API_KEY=${process.env.RESTACK_ENGINE_API_KEY}
+        - OPEN_BABYLON_API_URL=${process.env.OPEN_BABYLON_API_URL}
+    ports:
+      - "3000"
+    env_file:
+      - ./backend/.env
+    networks:
+      - bridge

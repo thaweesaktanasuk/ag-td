@@ -1,0 +1,26 @@
+{
+  "name": "audio-transcript",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "open-cli http://localhost:5233 && tsx watch --include src src/services.ts",
+    "build": "tsc --build",
+    "clean": "rm -rf node_modules",
+    "schedule": "ts-node ./scheduleWorkflow.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@restackio/ai": "^0.0.96",
+    "@temporalio/workflow": "^1.11.6",
+    "dotenv": "^16.4.7",
+    "openai": "^4.76.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "nodemon": "^3.1.7",
+    "open-cli": "^8.0.0",
+    "tsx": "4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

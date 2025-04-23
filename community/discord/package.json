@@ -1,0 +1,33 @@
+{
+  "name": "discord-example-ts",
+  "version": "1.0.0",
+  "description": "Basic Discord human loop example",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/services.ts",
+    "start.watch": "nodemon src/services.ts",
+    "dev": "pnpm start.watch",
+    "build": "tsc --build",
+    "clean": "rm -rf node_modules",
+    "service": "ts-node src/services.ts",
+    "schedule": "ts-node scheduleWorkflow.ts"
+  },
+  "nodemonConfig": {
+    "execMap": {
+      "ts": "ts-node"
+    },
+    "ext": "ts",
+    "watch": [
+      "src"
+    ]
+  },
+  "dependencies": {
+    "@restackio/ai": "^0.0.82",
+    "@temporalio/workflow": "^1.11.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.6",
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.2"
+  }
+}

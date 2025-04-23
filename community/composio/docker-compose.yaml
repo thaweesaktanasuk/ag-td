@@ -1,0 +1,27 @@
+name: restack-composio-example
+services:
+  restack_engine:
+    image: ghcr.io/restackio/restack:main
+    ports:
+      - "5233:5233"
+      - "6233:6233"
+      - "7233:7233"
+    environment:
+      - RESTACK_ENGINE_ID
+      - RESTACK_ENGINE_ADDRESS
+      - RESTACK_ENGINE_API_KEY
+  composio:
+    image: composio
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - COMPOSIO_API_KEY
+      - OPENAI_API_KEY
+      - RESTACK_ENGINE_ID
+      - RESTACK_ENGINE_ADDRESS
+      - RESTACK_ENGINE_API_KEY
+    depends_on:
+      - restack_engine

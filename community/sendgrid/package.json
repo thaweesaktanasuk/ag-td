@@ -1,0 +1,37 @@
+{
+  "name": "email-sender",
+  "version": "1.0.0",
+  "main": "index.js",
+  "description": "Sending an email with Sengrid example",
+  "scripts": {
+    "start": "ts-node src/services.ts",
+    "start.watch": "nodemon src/services.ts",
+    "dev": "npm run start.watch",
+    "build": "tsc --build",
+    "clean": "rm -rf node_modules",
+    "schedule": "ts-node ./scheduleWorkflow.ts",
+    "schedule-retries": "ts-node ./scheduleWorkflowRetries.ts"
+  },
+  "nodemonConfig": {
+    "execMap": {
+      "ts": "ts-node"
+    },
+    "ext": "ts",
+    "watch": [
+      "src"
+    ]
+  },
+  "author": "Restack",
+  "license": "ISC",
+  "dependencies": {
+    "@restackio/ai": "^0.0.109",
+    "@sendgrid/mail": "^8.1.4",
+    "dotenv": "^16.4.6",
+    "openai": "^4.74.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2"
+  }
+}
