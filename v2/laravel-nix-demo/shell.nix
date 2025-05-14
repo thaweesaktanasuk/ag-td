@@ -58,6 +58,14 @@ pkgs.mkShell {
     start-services() {
       echo "Starting MariaDB..."
       mkdir -p ./.data/mysql
+
+      # Check if MariaDB is initialized
+      if [ ! -f ./.data/mysql/ibdata1 ]; then
+        echo "Initializing MariaDB database..."
+        mysql_install_db --datadir=./.data/mysql --auth-root-authentication-method=normal
+      fi
+
+      # Start MariaDB server
       mysqld --datadir=./.data/mysql --socket=./.data/mysql.sock \
         --pid-file=./.data/mysql.pid --user=$USER \
         --skip-networking=0 --port=3306 \
