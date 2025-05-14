@@ -58,8 +58,8 @@ pkgs.mkShell {
     start-services() {
       echo "Starting MariaDB..."
 
-      # Clean up any existing socket or pid files
-      rm -f ./.data/mysql.sock ./.data/mysql.pid
+      # Clean up any existing pid files
+      rm -f ./.data/mysql.pid
 
       # Create data directory
       mkdir -p ./.data/mysql
@@ -69,10 +69,7 @@ pkgs.mkShell {
       rm -rf ./.data/mysql/*
       mysql_install_db --datadir=./.data/mysql --auth-root-authentication-method=normal
 
-      # Create socket directory
-      mkdir -p $(dirname ./.data/mysql.sock)
-
-      # Start MariaDB server with TCP only (no socket)
+      # Start MariaDB server with TCP only (explicitly disable socket)
       echo "Starting MariaDB server..."
       mysqld --datadir=./.data/mysql \
         --pid-file=./.data/mysql.pid \
@@ -80,7 +77,8 @@ pkgs.mkShell {
         --skip-networking=0 \
         --bind-address=127.0.0.1 \
         --port=3306 \
-        --skip-grant-tables &
+        --skip-grant-tables \
+        --socket=/dev/null &
 
       # Wait for MariaDB to start
       echo "Waiting for MariaDB to start..."
