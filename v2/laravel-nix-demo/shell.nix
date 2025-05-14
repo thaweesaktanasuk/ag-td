@@ -79,23 +79,23 @@ pkgs.mkShell {
         sleep 2
       fi
 
-      # Create a custom my.cnf file to disable socket
-      mkdir -p ./.data/config
-      cat > ./.data/config/my.cnf << EOF
-[mysqld]
-skip-networking=0
-bind-address=127.0.0.1
-port=3306
-skip-grant-tables
-# Completely disable socket
-skip-socket
-EOF
-
-      # Start MariaDB with our custom config
-      mysqld --defaults-file=./.data/config/my.cnf \
+      # Start MariaDB with TCP only and no defaults
+      echo "Starting MariaDB with TCP only..."
+      mysqld --no-defaults \
         --datadir=./.data/mysql \
         --pid-file=./.data/mysql.pid \
-        --user=$USER &
+        --user=$USER \
+        --skip-networking=0 \
+        --bind-address=127.0.0.1 \
+        --port=3306 \
+        --skip-grant-tables \
+        --skip-host-cache \
+        --skip-name-resolve \
+        --skip-slave-start \
+        --skip-external-locking \
+        --skip-log-bin \
+        --skip-sync-frm \
+        --skip-symbolic-links &
 
       # Wait for MariaDB to start
       echo "Waiting for MariaDB to start..."
@@ -117,12 +117,24 @@ EOF
     stop-services() {
       echo "Stopping MariaDB..."
       if [ -f ./.data/mysql.pid ]; then
-        kill $(cat ./.data/mysql.pid)
+        kill $(cat ./.data/mysql.pid) 2>/dev/null || true
         rm -f ./.data/mysql.pid
       fi
 
+      # Make sure all mysqld processes are stopped
+      if pgrep -x "mysqld" > /dev/null; then
+        echo "Killing remaining mysqld processes..."
+        pkill -x "mysqld" || true
+      fi
+
       echo "Stopping Redis..."
-      redis-cli shutdown
+      redis-cli shutdown 2>/dev/null || true
+
+      # Make sure all redis-server processes are stopped
+      if pgrep -x "redis-server" > /dev/null; then
+        echo "Killing remaining redis-server processes..."
+        pkill -x "redis-server" || true
+      fi
 
       echo "Services stopped successfully!"
     }
