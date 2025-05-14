@@ -1,0 +1,29 @@
+# Nix-specific
+.data/
+result
+result-*
+
+# Laravel-specific
+/laravel-app/node_modules
+/laravel-app/public/hot
+/laravel-app/public/storage
+/laravel-app/storage/*.key
+/laravel-app/vendor
+/laravel-app/.env
+/laravel-app/.env.backup
+/laravel-app/.env.production
+/laravel-app/.phpunit.result.cache
+/laravel-app/Homestead.json
+/laravel-app/Homestead.yaml
+/laravel-app/auth.json
+/laravel-app/npm-debug.log
+/laravel-app/yarn-error.log
+/laravel-app/.fleet
+/laravel-app/.idea
+/laravel-app/.vscode
+/laravel-app/database/*.sqlite
+/laravel-app/database/*.sqlite-journal
+
+# OS-specific
+.DS_Store
+Thumbs.db
