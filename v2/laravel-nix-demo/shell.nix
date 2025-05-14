@@ -1,13 +1,27 @@
 { pkgs ? import <nixpkgs> {} }:
 
+let
+  # Define PHP version with Redis extension
+  php = pkgs.php82.buildEnv {
+    extensions = { all, enabled }: with all; enabled ++ [
+      redis
+    ];
+    extraConfig = ''
+      memory_limit = 512M
+      upload_max_filesize = 100M
+      post_max_size = 100M
+      display_errors = On
+      error_reporting = E_ALL
+    '';
+  };
+in
+
 pkgs.mkShell {
   name = "laravel-redis-mariadb-env";
   buildInputs = with pkgs; [
-    # PHP and Composer
-    php82
+    # PHP with Redis extension and Composer
+    php
     php82Packages.composer
-
-    # PHP extensions are included in the main PHP package
 
     # Database
     mariadb
@@ -150,8 +164,8 @@ pkgs.mkShell {
       echo "Configuring Laravel to use Redis..."
       cd laravel-app
 
-      # Install predis package
-      composer require predis/predis
+      # We don't need to install predis since we have the native Redis extension
+      # But we'll add the Redis configuration to the Laravel config
 
       # Update .env file
       sed -i 's/CACHE_DRIVER=file/CACHE_DRIVER=redis/g' .env
@@ -159,6 +173,18 @@ pkgs.mkShell {
       sed -i 's/REDIS_HOST=127.0.0.1/REDIS_HOST=127.0.0.1/g' .env
       sed -i 's/REDIS_PASSWORD=null/REDIS_PASSWORD=null/g' .env
       sed -i 's/REDIS_PORT=6379/REDIS_PORT=6379/g' .env
+
+      # Update the Redis client in config/database.php to use phpredis
+      if [ -f config/database.php ]; then
+        # Check if the file contains the Redis client configuration
+        if grep -q "'client' => 'predis'" config/database.php; then
+          # Change from predis to phpredis
+          sed -i "s/'client' => 'predis'/'client' => 'phpredis'/g" config/database.php
+        elif grep -q "'client' => env('REDIS_CLIENT', 'predis')" config/database.php; then
+          # Change the default from predis to phpredis
+          sed -i "s/'client' => env('REDIS_CLIENT', 'predis')/'client' => env('REDIS_CLIENT', 'phpredis')/g" config/database.php
+        fi
+      fi
 
       echo "Redis configuration completed!"
     }
