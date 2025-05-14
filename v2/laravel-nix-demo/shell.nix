@@ -57,32 +57,40 @@ pkgs.mkShell {
     # Define helper functions
     start-services() {
       echo "Starting MariaDB..."
+
+      # Clean up any existing socket or pid files
+      rm -f ./.data/mysql.sock ./.data/mysql.pid
+
+      # Create data directory
       mkdir -p ./.data/mysql
 
-      # Check if MariaDB is initialized
-      if [ ! -f ./.data/mysql/ibdata1 ]; then
-        echo "Initializing MariaDB database..."
-        mysql_install_db --datadir=./.data/mysql --auth-root-authentication-method=normal
-      fi
+      # Completely reinitialize the database
+      echo "Initializing MariaDB database..."
+      rm -rf ./.data/mysql/*
+      mysql_install_db --datadir=./.data/mysql --auth-root-authentication-method=normal
 
-      # Start MariaDB server
-      mysqld --datadir=./.data/mysql --socket=./.data/mysql.sock \
-        --pid-file=./.data/mysql.pid --user=$USER \
-        --skip-networking=0 --port=3306 \
-        --default-authentication-plugin=mysql_native_password &
+      # Create socket directory
+      mkdir -p $(dirname ./.data/mysql.sock)
+
+      # Start MariaDB server with TCP only (no socket)
+      echo "Starting MariaDB server..."
+      mysqld --datadir=./.data/mysql \
+        --pid-file=./.data/mysql.pid \
+        --user=$USER \
+        --skip-networking=0 \
+        --bind-address=127.0.0.1 \
+        --port=3306 \
+        --skip-grant-tables &
 
       # Wait for MariaDB to start
       echo "Waiting for MariaDB to start..."
-      while ! mysqladmin ping -h 127.0.0.1 --silent; do
+      while ! mysqladmin -h 127.0.0.1 -P 3306 ping --silent; do
         sleep 1
       done
 
-      # Create database and user if they don't exist
-      echo "Setting up MariaDB database and user..."
+      # Create database (no need to create users with --skip-grant-tables)
+      echo "Setting up MariaDB database..."
       mysql -h 127.0.0.1 -e "CREATE DATABASE IF NOT EXISTS laravel;"
-      mysql -h 127.0.0.1 -e "CREATE USER IF NOT EXISTS 'laravel'@'%' IDENTIFIED BY 'laravel';"
-      mysql -h 127.0.0.1 -e "GRANT ALL PRIVILEGES ON laravel.* TO 'laravel'@'%';"
-      mysql -h 127.0.0.1 -e "FLUSH PRIVILEGES;"
 
       echo "Starting Redis..."
       mkdir -p ./.data/redis
@@ -132,13 +140,13 @@ pkgs.mkShell {
       echo "Configuring Laravel to use MariaDB..."
       cd laravel-app
 
-      # Update .env file
+      # Update .env file - with skip-grant-tables, any username/password will work
       sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=mysql/g' .env
       sed -i 's/DB_HOST=127.0.0.1/DB_HOST=127.0.0.1/g' .env
       sed -i 's/DB_PORT=3306/DB_PORT=3306/g' .env
       sed -i 's/DB_DATABASE=laravel/DB_DATABASE=laravel/g' .env
-      sed -i 's/DB_USERNAME=root/DB_USERNAME=laravel/g' .env
-      sed -i 's/DB_PASSWORD=/DB_PASSWORD=laravel/g' .env
+      sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/g' .env
+      sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=/g' .env
 
       # Run migrations
       php artisan migrate
