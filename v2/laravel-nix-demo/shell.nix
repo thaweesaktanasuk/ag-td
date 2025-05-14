@@ -69,16 +69,33 @@ pkgs.mkShell {
       rm -rf ./.data/mysql/*
       mysql_install_db --datadir=./.data/mysql --auth-root-authentication-method=normal
 
-      # Start MariaDB server with TCP only (explicitly disable socket)
+      # Start MariaDB server with TCP only (completely disable socket)
       echo "Starting MariaDB server..."
-      mysqld --datadir=./.data/mysql \
+
+      # First, check if any MariaDB process is already running
+      if pgrep -x "mysqld" > /dev/null; then
+        echo "MariaDB is already running. Stopping it..."
+        pkill -x "mysqld"
+        sleep 2
+      fi
+
+      # Create a custom my.cnf file to disable socket
+      mkdir -p ./.data/config
+      cat > ./.data/config/my.cnf << EOF
+[mysqld]
+skip-networking=0
+bind-address=127.0.0.1
+port=3306
+skip-grant-tables
+# Completely disable socket
+skip-socket
+EOF
+
+      # Start MariaDB with our custom config
+      mysqld --defaults-file=./.data/config/my.cnf \
+        --datadir=./.data/mysql \
         --pid-file=./.data/mysql.pid \
-        --user=$USER \
-        --skip-networking=0 \
-        --bind-address=127.0.0.1 \
-        --port=3306 \
-        --skip-grant-tables \
-        --socket=/dev/null &
+        --user=$USER &
 
       # Wait for MariaDB to start
       echo "Waiting for MariaDB to start..."
